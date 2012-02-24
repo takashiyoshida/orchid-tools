@@ -4,6 +4,20 @@
 repo_root_url: http://10.216.1.183/svn
 
 #
+#
+# - trunk
+# - branches/<branch-name>
+# - tags/<tag-name>
+#
+target: trunk
+
+#
+# workspace
+# - Projects will be checked out to the <workspace> directory.
+#
+workspace: src
+
+#
 # projects
 #
 projects:
@@ -36,9 +50,9 @@ projects:
 - otrgmanager
 
 #
-# build-order
+# build_order
 #
-build-order:
+build_order:
 - liboutility
 - liboproto
 - liboais
@@ -67,6 +81,8 @@ build-order:
 
 # build_type: Debug | Release | RelWithDebInfo
 build_type: Debug
+# build_dir: <workspace>/<build_dir>/<project>
+build_dir: build
 
 #
 # services
