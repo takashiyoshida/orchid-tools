@@ -1,0 +1,83 @@
+#
+# svn
+#
+repo_root_url: http://10.216.1.183/svn
+
+#
+# projects
+#
+projects:
+- deployment
+- liboais
+- libobroker
+- libodbaccess
+- libodbparser
+- liboheartbeat
+- liboproto
+- libosocket
+- liboutility
+- oalert
+- oanalysis
+- ocoastwatcher
+- odboffline
+- odbreader
+- odbwriter
+- odisplay
+- ofence
+- ofurunoais
+- ogateway
+- omsa-new
+- oplayer
+- oreplay
+- oreplaymanager
+- osquire
+- osysmgt
+- otraining
+- otrgmanager
+
+#
+# build-order
+#
+build-order:
+- liboutility
+- liboproto
+- liboais
+- libobroker
+- libodbaccess
+- libodbparser
+- liboheartbeat
+- libosocket
+- oalert
+- oanalysis
+- ocoastwatcher
+- odboffline
+- odbreader
+- odbwriter
+- ofence
+- ofurunoais
+- ogateway
+- omsa-new
+- oplayer
+- oreplay
+- oreplaymanager
+- osquire
+- osysmgt
+- otraining
+- otrgmanager
+
+# build_type: Debug | Release | RelWithDebInfo
+build_type: Debug
+
+#
+# services
+#
+services:
+- odbreader
+- odbwriter
+- osysmgt
+- oalert
+- oanalysis
+- ofence
+- omsa
+- oreplaymanager
+- oplayer
