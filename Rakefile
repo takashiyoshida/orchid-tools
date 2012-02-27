@@ -1,5 +1,6 @@
 require "yaml"
 
+desc "Checkout Orchid project from repository"
 task :checkout do
   yml = YAML::load_file("config.yml")
 
@@ -17,6 +18,7 @@ task :checkout do
   end
 end
 
+desc "Builds Orchid project from local workspace"
 task :build do
   yml = YAML::load_file("config.yml")
   
