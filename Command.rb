@@ -3,7 +3,7 @@
 class Command
   attr_reader :cmd
 
-  def initializer(cmd)
+  def initialize(cmd)
     @cmd = cmd
   end
 
@@ -15,6 +15,10 @@ class Command
   def pipe
     puts "Running: #{@cmd}"
     `#{@cmd}`
+  end
+  
+  def to_s
+  	str = "#{@cmd}"
   end
 end
 
