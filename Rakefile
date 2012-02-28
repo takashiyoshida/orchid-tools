@@ -1,4 +1,5 @@
 require "yaml"
+require "Command.rb"
 
 desc "Checkout Orchid project from repository"
 task :checkout do
@@ -37,10 +38,14 @@ task :build do
 end
 
 def checkout(repo_url, project, target, workspace)
-  command = "svn checkout #{repo_url}/#{project}/#{target} #{workspace}/#{project}"
-  puts command
-  success = system(command)
+  cmd = Command.new("svn checkout #{repo_url}/#{project}/#{target} #{workspace}/#{project}")
+  success = cmd.run
   success
+end
+
+def clone(repo_url, project, target, workspace)
+	cmd = Command.new("git-svn clone #{repo_url}/#{project}/#{target} #{workspace}/#{project}")
+	puts cmd
 end
 
 def make_dir(dirname)
@@ -55,6 +60,29 @@ def make_dir(dirname)
   end
   success
 end
+
+def update(workspace, project)
+  success = false
+  Dir.chdir(workspace) do
+    Dir.chdir(project) do
+    	cmd = Command.new("svn update")
+    	success = cmd.run
+    end
+  end
+  success
+end
+
+def rebase
+  success = false
+  Dir.chdir(workspace) do
+    Dir.chdir(project) do
+      cmd = Command.new("git-svn rebase")
+      puts cmd
+		end
+	end
+	success
+end
+
 
 def build(workspace, project, build_dir, build_type)
   success = false
@@ -94,9 +122,8 @@ end
 def cmake(project, build_type)
   success = false
   Dir.chdir(project) do
-    command = "cmake -DCMAKE_BUILD_TYPE=#{build_type} ../../#{project}"
-    puts command
-    success = system(command)
+    cmd = Command.new("cmake -DCMAKE_BUILD_TYPE=#{build_type} ../../#{project}")
+    success = cmd.run
   end
 
   if not success
@@ -109,9 +136,8 @@ end
 def make(project)
   success = false
   Dir.chdir(project) do
-    command = "make"
-    puts command
-    success = system(command)
+    cmd = Command.new("make")
+    success = cmd.run
   end
 
   if not success
@@ -124,9 +150,8 @@ end
 def install(project)
   success = false
   Dir.chdir(project) do
-    command = "sudo make install"
-    puts command
-    success = system(command)
+    cmd = Command.new("sudo make install")
+    success = cmd.run
   end
   success
 end
