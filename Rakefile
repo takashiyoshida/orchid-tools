@@ -6,14 +6,49 @@ task :checkout do
   yml = YAML::load_file("config.yml")
 
   gbaby = yml["repo_root_url"]
+  svn_tool = yml["svn_tool"]
+
   target = yml["target"]
   workspace = yml["workspace"]
   projects = yml["projects"]
 
   projects.each do | project |
-    success = checkout(gbaby, project, target, workspace)
+    if svn_tool == "svn"
+      success = checkout(gbaby, project, target, workspace)
+    elsif svn_tool == "git-svn"
+      success = clone(gbaby, project, target, workspace)
+    else
+      puts "Invalid 'svn_tool' option: #{svn_tool}"
+      exit 1
+    end
+
     if not success
       puts "Failed to checkout #{project}. Stopping checkout."
+      exit 1
+    end
+  end
+end
+
+desc "Update workspace with the latest source code"
+task :update do
+  yml = YAML::load_file("config.yml")
+  
+  svn_tool = yml["svn_tool"]
+  workspace = yml["workspace"]
+  projects = yml["projects"]
+
+  projects.each do | project |
+    if svn_tool == "svn"
+      success = update(workspace, project)
+    elsif svn_tool == "git-svn"
+      success = rebase(workspace, project)
+    else
+      puts "Invalid svn_tool option: #{svn_tool}"
+      exit 1
+    end
+
+    if not success
+      puts "Failed to update #{project}. Stopping update."
       exit 1
     end
   end
@@ -37,36 +72,50 @@ task :build do
   end
 end
 
-def checkout(repo_url, project, target, workspace)
-  cmd = Command.new("svn checkout #{repo_url}/#{project}/#{target} #{workspace}/#{project}")
+desc "Destroys existing workspace"
+task :destroy do
+  yml = YAML::load_file("config.yml")
+
+  workspace = yml["workspace"]
+  cmd = Command.new("rm -rf #{workspace}")
   success = cmd.run
-  success
+
+  if not success
+    puts "Failed to destroy #{workspace}."
+    exit 1
+  end
+end
+
+task :tidy do
+  cmd = Command.new('find . -name "*~" -print')
+  cmd.run
+  cmd = Command.new('find . -name "*~" -exec rm {} \;')
+  cmd.run
+end
+
+def checkout(repo_url, project, target, workspace)
+  target_url = get_repo_target_url(repo_url, project, target)
+  workspace_path = get_workspace_path(workspace, project)
+  cmd = Command.new("svn checkout #{target_url} #{workspace_path}")
+  success = cmd.run
 end
 
 def clone(repo_url, project, target, workspace)
-	cmd = Command.new("git-svn clone #{repo_url}/#{project}/#{target} #{workspace}/#{project}")
-	puts cmd
-end
+  target_url = get_repo_target_url(repo_url, project, target)
+  workspace_path = get_workspace_path(workspace, project)
+  cmd = Command.new("git svn clone #{target_url} #{workspace_path}")
+  success = cmd.run
 
-def make_dir(dirname)
-  success = true
-  if File.exists? dirname
-    if not File.directory? dirname
-      puts "#{dirname} already exists, but is not a directory."
-      success = false
-    end
-  else
-    Dir.mkdir(dirname)
-  end
-  success
+  entries = Dir.entries(workspace_path);
+  success = (entries.count > 3) ? true : false
 end
 
 def update(workspace, project)
   success = false
   Dir.chdir(workspace) do
     Dir.chdir(project) do
-    	cmd = Command.new("svn update")
-    	success = cmd.run
+      cmd = Command.new("svn update")
+      success = cmd.run
     end
   end
   success
@@ -78,11 +127,10 @@ def rebase
     Dir.chdir(project) do
       cmd = Command.new("git-svn rebase")
       puts cmd
-		end
-	end
-	success
+    end
+  end
+  success
 end
-
 
 def build(workspace, project, build_dir, build_type)
   success = false
@@ -154,4 +202,25 @@ def install(project)
     success = cmd.run
   end
   success
+end
+
+def make_dir(dirname)
+  success = true
+  if File.exists? dirname
+    if not File.directory? dirname
+      puts "#{dirname} already exists, but is not a directory."
+      success = false
+    end
+  else
+    Dir.mkdir(dirname)
+  end
+  success
+end
+
+def get_repo_target_url(repo_url, project, target)
+  target_url = "#{repo_url}/#{project}/#{target}"
+end
+
+def get_workspace_path(workspace, project)
+  workspace_path = "#{workspace}/#{project}"
 end

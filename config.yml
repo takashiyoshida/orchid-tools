@@ -3,6 +3,11 @@
 #
 repo_root_url: http://10.216.1.183/svn
 
+# You can choose to use 'svn' or 'git-svn'.
+# If you decide to use 'git-svn', you must have git and git-svn installed 
+# on your computer.
+svn_tool: git-svn
+
 #
 #
 # - trunk
