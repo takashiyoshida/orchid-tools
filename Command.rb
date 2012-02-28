@@ -18,7 +18,7 @@ class Command
   end
   
   def to_s
-  	str = "#{@cmd}"
+    str = "#{@cmd}"
   end
 end
 
