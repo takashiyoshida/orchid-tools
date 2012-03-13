@@ -1,104 +1,109 @@
-#
-# svn
-#
-repo_root_url: http://10.216.1.183/svn
+svn:
+    # SVN repository URL
+    repo_url: http://10.216.1.183/svn
 
-# You can choose to use 'svn' or 'git-svn'.
-# If you decide to use 'git-svn', you must have git and git-svn installed 
-# on your computer.
-svn_tool: git-svn
+    # target:
+    # You have a choice of:
+    # trunk, branches/<branch-name>, tags/<tag-name>
+    target: trunk
 
-#
-#
-# - trunk
-# - branches/<branch-name>
-# - tags/<tag-name>
-#
-target: trunk
+    # tool:
+    # You have a choice of:
+    # svn, git-svn
+    tool: git-svn
 
-#
-# workspace
-# - Projects will be checked out to the <workspace> directory.
-#
-workspace: src
+    # workspace:
+    # Projects will be checked out to the <workspace> directory
+    workspace: src
 
-#
-# projects
-#
-projects:
-- deployment
-- liboais
-- libobroker
-- libodbaccess
-- libodbparser
-- liboheartbeat
-- liboproto
-- libosocket
-- liboutility
-- oalert
-- oanalysis
-- ocoastwatcher
-- odboffline
-- odbreader
-- odbwriter
-- odisplay
-- ofence
-- ofurunoais
-- ogateway
-- omsa-new
-- oplayer
-- oreplay
-- oreplaymanager
-- osquire
-- osysmgt
-- otraining
-- otrgmanager
+    # projects:
+    # The following projects will be checked out from repository
+    projects:
+    - deployment
+    - liboais
+    - libobroker
+    - libodbaccess
+    - libodbparser
+    - liboheartbeat
+    - liboproto
+    - libosocket
+    - liboutility
+    - oalert
+    - oanalysis
+    - ocoastwatcher
+    - odboffline
+    - odbreader
+    - odbwriter
+    - odisplay
+    - ofence
+    - ofurunoais
+    - ogateway
+    - omsa-new
+    - oplayer
+    - oreplay
+    - oreplaymanager
+    - osquire
+    - osysmgt
+    - otraining
+    - otrgmanager
 
-#
-# build_order
-#
-build_order:
-- liboutility
-- liboproto
-- liboais
-- libobroker
-- libodbaccess
-- libodbparser
-- liboheartbeat
-- libosocket
-- oalert
-- oanalysis
-- ocoastwatcher
-- odboffline
-- odbreader
-- odbwriter
-- ofence
-- ofurunoais
-- ogateway
-- omsa-new
-- oplayer
-- oreplay
-- oreplaymanager
-- osquire
-- osysmgt
-- otraining
-- otrgmanager
+build:
+    # build_type:
+    # <build_type> is passed to CMake phase. Choose one of the following options:
+    # Debug, Release, RelWithDebInfo
+    build_type: Debug
 
-# build_type: Debug | Release | RelWithDebInfo
-build_type: Debug
-# build_dir: <workspace>/<build_dir>/<project>
-build_dir: build
+    # build_dir:
+    # All projects will be built under <build_dir> directory.
+    build_dir: build
 
-#
-# services
-#
-services:
-- odbreader
-- odbwriter
-- osysmgt
-- oalert
-- oanalysis
-- ofence
-- omsa
-- oreplaymanager
-- oplayer
+    # order
+    # Orchid project will be built in the following order.
+    order:
+    - liboutility
+    - liboproto
+    - liboais
+    - libobroker
+    - libodbaccess
+    - libodbparser
+    - liboheartbeat
+    - libosocket
+    - oalert
+    - oanalysis
+    - ocoastwatcher
+    - odboffline
+    - odbreader
+    - odbwriter
+    - ofence
+    - ofurunoais
+    - ogateway
+    - omsa-new
+    - oplayer
+    - oreplay
+    - oreplaymanager
+    - osquire
+    - osysmgt
+    - otraining
+    - otrgmanager
+
+database:
+    host: localhost
+    port: 4432
+    db_name: orchid
+    db_user: postgres
+
+test:
+    amq_bin_path: apache-activemq-5.5.0-fuse-00-27/bin
+
+    order:
+    - odbreader
+    - odbwriter
+    - osysmgt
+    - oalert
+    - oanalysis
+    - ofence
+    - omsa
+    - oreplaymanager
+    - oplayer
+
+    log_dir: logs
