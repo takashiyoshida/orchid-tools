@@ -160,8 +160,8 @@ namespace :db do
     end
 
     str = "pg_dump --host #{host} --port #{port} --username #{username} "
-    str << "--format plain --clean --verbose "
-    str << "--file \"#{db_name}.db\" #{db_name}"
+    str << "--format plain --clean --no-privileges "
+    str << "#{db_name} --file=#{db_name}.db"
 
     cmd = Command.new(str)
     success = cmd.run
@@ -186,8 +186,8 @@ namespace :db do
     username = yml["database"]["db_user"]
 
     str = "pg_dump --host #{host} --port #{port} --username #{username} "
-    str << "--format plain --data-only --verbose "
-    str << "--file \"#{args.table_name}.db\" --table public.#{args.table_name} #{db_name}"
+    str << "--format=plain --data-only --no-privileges "
+    str << "--table=public.#{args.table_name} #{db_name} --file=#{args.table_name}.db"
 
     cmd = Command.new(str)
     success = cmd.run
@@ -291,6 +291,21 @@ namespace :test do
         stop_job("bin-omsa")
       end
       sleep 2
+    end
+  end
+
+  desc "Restart Orchid service"
+  task :restart, [:service] do |t, args|
+    args.with_defaults(:service => "")
+
+    if args.service.empty?
+      Rake::Task["test:stop"].execute
+      sleep 2
+      Rake::Task["test:start"].execute
+    else
+      Rake::Task["test:stop"].invoke(args.service)
+      sleep 2
+      Rake::Task["test:start"].invoke(args.service)
     end
   end
 end
