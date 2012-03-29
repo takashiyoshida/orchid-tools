@@ -24,6 +24,7 @@ svn:
     - libobroker
     - libodbaccess
     - libodbparser
+    - libodictionary
     - liboheartbeat
     - liboproto
     - libosocket
@@ -66,6 +67,7 @@ build:
     - libobroker
     - libodbaccess
     - libodbparser
+    - libodictionary
     - liboheartbeat
     - libosocket
     - oalert
@@ -88,12 +90,12 @@ build:
 
 database:
     host: localhost
-    port: 4432
+    port: 5432
     db_name: orchid
     db_user: postgres
 
 test:
-    amq_bin_path: apache-activemq-5.5.0-fuse-00-27/bin
+    amq_bin_path: apache-activemq-5.5.1-fuse-03-06/bin
 
     order:
     - odbreader
