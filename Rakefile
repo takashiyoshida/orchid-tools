@@ -78,6 +78,9 @@ namespace :env do
 
     cmd = Command.new('find . -name "*.log*" -exec rm {} \;')
     cmd.run
+
+    cmd = Command.new('find . -name "core*" -exec rm {} \;')
+    cmd.run
   end
 
   desc "Destroy current workspace"
