@@ -71,6 +71,28 @@ namespace :env do
     end
   end
 
+  desc "Run unit tests from local workspace"
+  task :test, [:project] => :build do |t, args|
+    # For each project, go to its build directory and see if test directory is there.
+    # If it exists, run the unit test
+    args.with_defaults(:project => "")
+    test_order = Array.new
+
+    yml = YAML::load_file(CONFIG_FILE)
+    if args.project.empty?
+      test_order = yml["build"]["test_order"]
+    else
+      test_order.push(args.project)
+    end
+
+    test_order.each do | project |
+      success = test(yml, project)
+      if not success
+        puts "Failed to test #{project}."
+      end
+    end
+  end
+
   desc "Remove unnecessary files from current workspace"
   task :tidy do
     cmd = Command.new('find . -name "*~" -exec rm {} \;')
@@ -99,9 +121,10 @@ namespace :db do
   desc "Drop database"
   task :drop do
     yml = YAML::load_file(CONFIG_FILE)
+    db_user = yml["database"]["db_user"]
     db_name = yml["database"]["db_name"]
 
-    cmd = Command.new("dropdb #{db_name}")
+    cmd = Command.new("dropdb -U #{db_user} #{db_name}")
     success = cmd.run
 
     if not success
@@ -113,9 +136,10 @@ namespace :db do
   desc "Create database"
   task :create do
     yml = YAML::load_file(CONFIG_FILE)
+    db_user = yml["database"]["db_user"]
     db_name = yml["database"]["db_name"]
 
-    cmd = Command.new("createdb #{db_name}")
+    cmd = Command.new("createdb -U #{db_user} #{db_name}")
     success = cmd.run
 
     if not success
@@ -129,6 +153,7 @@ namespace :db do
     args.with_defaults(:db_schema => "")
 
     yml = YAML::load_file(CONFIG_FILE)
+    db_user = yml["database"]["db_user"]
     db_name = yml["database"]["db_name"]
 
     if args.db_schema.empty?
@@ -138,7 +163,7 @@ namespace :db do
       db_schema_path = args.orchid_db
     end
 
-    cmd = Command.new("psql #{db_name} < #{db_schema_path}")
+    cmd = Command.new("psql -U #{db_user} #{db_name} < #{db_schema_path}")
     success = cmd.run
 
     if not success
@@ -381,6 +406,20 @@ def build(yml, project)
     end
     success
   end
+end
+
+def test(yml, project)
+  success = false
+
+  Dir.chdir(yml["svn"]["workspace"]) do
+    Dir.chdir(yml["build"]["build_dir"]) do
+      Dir.chdir(project) do
+        cmd = Command.new("test/run_test")
+        success = cmd.run
+      end
+    end
+  end
+  success
 end
 
 def stop_job(job)

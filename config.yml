@@ -26,6 +26,7 @@ svn:
     - libodbparser
     - libodictionary
     - liboheartbeat
+    - libolocale
     - liboproto
     - libosocket
     - liboutility
@@ -69,6 +70,7 @@ build:
     - libodbparser
     - libodictionary
     - liboheartbeat
+    - libolocale
     - libosocket
     - oalert
     - oanalysis
@@ -88,6 +90,11 @@ build:
     - otraining
     - otrgmanager
 
+    test_order:
+    - libolocale
+    - liboutility
+    - oanalysis
+    
 database:
     host: localhost
     port: 5432
